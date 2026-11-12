@@ -1,0 +1,63 @@
+paths:
+  train: data/raw/train.csv
+  test: data/raw/test.csv
+  model_dir: models/
+  submission: data/processed/submission.csv
+
+columns:
+  id: id
+  target: is_fraud         
+
+  numeric:
+    - amount_usd
+    - hours_since_last_txn
+    - txn_count_last_24h
+    - distance_from_home_km
+    - card_age_months
+    - customer_age
+    - account_balance_usd
+    - cvv_retry_count
+    - velocity_score
+    - time_of_day_hour
+    - day_of_week
+    - merchant_risk_score
+    - prior_disputes
+
+  flags:                     
+    - is_foreign_transaction
+    - is_new_merchant
+    - used_vpn
+    - ip_country_mismatch
+    - billing_shipping_mismatch
+    - is_ai_generated_scam_attempt
+
+  ordinal: [auth_method]                       
+  label_encode: [card_type, channel, device_type]
+  category: [merchant_category]
+
+features:
+  auth_order:                 # ordinal by fraud risk, lowest to highest
+    Biometric: 0
+    PIN: 1
+    OTP: 2
+    3D Secure: 3
+    No Authentication: 4
+  cvv_flag_threshold: 2       # cvv_retry_count >= 2 counts as a red flag
+
+split:
+  test_size: 0.1
+  random_state: 42
+
+model:
+  params:
+    learning_rate: 0.05
+    max_depth: 3
+    min_child_weight: 5
+    subsample: 0.8
+    colsample_bytree: 0.8
+    tree_method: hist
+    enable_categorical: true
+    random_state: 42
+  max_trees: 5000
+  early_stopping_rounds: 200
+  final_tree_multiplier: 1.15   # extra trees when retraining on all data
