@@ -35,17 +35,8 @@ columns:
   label_encode: [card_type, channel, device_type]
   category: [merchant_category]
 
-features:
-  auth_order:                 # ordinal by fraud risk, lowest to highest
-    Biometric: 0
-    PIN: 1
-    OTP: 2
-    3D Secure: 3
-    No Authentication: 4
-  cvv_flag_threshold: 2       # cvv_retry_count >= 2 counts as a red flag
-
 split:
-  test_size: 0.1
+  test_size: 0.2
   random_state: 42
 
 model:
